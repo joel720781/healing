@@ -95,24 +95,110 @@
         margin: 10px;
     }
         }
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  max-width: 80%;
+  max-height: 60%;
+  overflow-y: auto;
+  text-align: left;
+}
+.popup h2 {
+  margin-top: 0;
+  font-size: 1.4em;
+  text-align: center;
+}
+.popup ul {
+  list-style: none;
+  padding: 0;
+}
+.popup li {
+  margin: 10px 0;
+  border-bottom: 1px dashed #aaa;
+  padding-bottom: 5px;
+}
+.popup button {
+  margin-top: 20px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+#popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px 40px;
+  border-radius: 15px;
+  z-index: 100;
+  box-shadow: 0 0 25px rgba(0,0,0,0.25);
+  max-width: 90%;
+  max-height: 70%;
+  overflow-y: auto;
+  text-align: center;
+}
+
+
+.blur #fortune {
+  opacity: 0;
+}
+.blur #contentWrapper button {
+  display: none;
+}
+
+
+
 
     </style>
 </head>
 <body onload="setRandomBackground()">
-<div id="contentWrapper">
-    <div id="fortune">準備好了嗎?先深呼吸三次，心中想著今天宇宙有什麼話想跟我說，並按下抽籤。 🌟</div>
-    <button onclick="drawFortune()">抽籤 ✨</button>
-    <button onclick="setRandomBackground()">切換背景 🌈</button>
-</div>
+<div id="overlay" class="overlay" style="display: none;"></div>
+<div id="blurWrapper">
+<div id="appContent">
 
-    <div id="bgSelector" class="bg-selector" style="display: none;">
-        <p>請選擇背景圖：</p>
-        <img src="images/bg1.png" class="bg-thumb" onclick="changeBackground('images/bg1.png')">
-        <img src="images/bg2.png" class="bg-thumb" onclick="changeBackground('images/bg2.png')">
-        <img src="images/bg3.png" class="bg-thumb" onclick="changeBackground('images/bg3.png')">
-        <img src="images/bg4.png" class="bg-thumb" onclick="changeBackground('images/bg4.png')">
-        <img src="images/bg5.png" class="bg-thumb" onclick="changeBackground('images/bg5.png')">
-    </div>
+<div id="contentWrapper">
+    <div id="fortune">準備好了嗎?先深呼吸三次，心中想著今天宇宙有什麼話想跟我說，並按下接收。 🌟</div>
+    <button onclick="drawFortune()">接收 ✨</button>
+    <button onclick="setRandomBackground()">切換背景 🌈</button>
+    <button onclick="showHistory()">📖 我的宇宙回音</button>
+
+
+<div id="bgSelector" class="bg-selector" style="display: none;">
+    <p>請選擇背景圖：</p>
+    <img src="images/bg1.png" class="bg-thumb" onclick="changeBackground('images/bg1.png')">
+    <img src="images/bg2.png" class="bg-thumb" onclick="changeBackground('images/bg2.png')">
+    <img src="images/bg3.png" class="bg-thumb" onclick="changeBackground('images/bg3.png')">
+    <img src="images/bg4.png" class="bg-thumb" onclick="changeBackground('images/bg4.png')">
+    <img src="images/bg5.png" class="bg-thumb" onclick="changeBackground('images/bg5.png')">
+</div>
+</div>
+</div>
+</div>
+<div id="popup" class="popup" style="display: none;">
+    <h2>💫 我的宇宙回音</h2>
+    <ul id="historyList"></ul>
+    <button onclick="closePopup()">關閉</button>
+</div>
 <script>
     const backgrounds = [
    'images/bg1.png',
@@ -121,7 +207,14 @@
    'images/bg4.png',
    'images/bg5.png'
  ];
+ function drawFortune() {
+         const today = new Date().toLocaleDateString();
+    const lastDrawDate = localStorage.getItem("lastDrawDate");
 
+    if (lastDrawDate === today) {
+        alert("今天已經抽過囉～明天再來 🌟");
+        return;
+    }
    const fortunes = [
      "你沒有走得太慢，只是在好好感受風景。",
      "今天的你，很努力了，該休息一下了。",
@@ -162,7 +255,12 @@
      "過去付出的努力將會有結果。",
      "世界不變的道理就是一切都在變，接受改變，享受過程。"
    ];
+const result = fortunes[Math.floor(Math.random() * fortunes.length)];
+    document.getElementById("fortune").innerText = result;
 
+    localStorage.setItem("lastDrawDate", today);
+    saveFortune(result);
+   }
  function setRandomBackground() {
     const randomIndex = Math.floor(Math.random() * backgrounds.length);
     document.body.style.backgroundImage = `url('${backgrounds[randomIndex]}')`;
@@ -170,10 +268,7 @@
     document.body.style.backgroundPosition = 'center';
     document.body.style.backgroundRepeat = 'no-repeat';
   }
-    function drawFortune() {
-     const randomIndex = Math.floor(Math.random() * fortunes.length);
-     document.getElementById("fortune").textContent = fortunes[randomIndex];
-   }
+
 
    function changeBackground(imagePath) {
      document.body.style.backgroundImage = `url('${imagePath}')`;
@@ -182,6 +277,39 @@
  const bgDiv = document.getElementById("bgSelector");
  bgDiv.style.display = (bgDiv.style.display === "none") ? "block" : "none";
 }
+    function saveFortune(fortune) {
+    let history = JSON.parse(localStorage.getItem("fortuneHistory")) || [];
+    if (!history.includes(fortune)) {
+        history.push(fortune);
+        localStorage.setItem("fortuneHistory", JSON.stringify(history));
+    }
+}
+
+
+function showHistory() {
+    let history = JSON.parse(localStorage.getItem("fortuneHistory")) || [];
+    let list = document.getElementById("historyList");
+    list.innerHTML = ""; // 清空之前的內容
+    if (history.length === 0) {
+        list.innerHTML = "<li>你還沒有收藏籤語，快去抽一張吧！</li>";
+    } else {
+        history.forEach(f => {
+            let li = document.createElement("li");
+            li.textContent = f;
+            list.appendChild(li);
+        });
+    }
+
+    document.getElementById("popup").style.display = "block";
+   document.body.classList.add("blur");
+}
+
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+     document.body.classList.remove("blur");
+
+}
+
 </script>
 </body>
 </html>
