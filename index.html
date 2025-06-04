@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
     <title>療癒籤語</title>
     <style>
@@ -16,24 +17,32 @@
           background-repeat: no-repeat;
          font-family: "Arial", sans-serif;
           overflow: hidden;
+            padding: 0;
+             text-align: center;
         }
 
         .bg-selector {
           margin-bottom: 20px;
+            display: flex;
+              flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
         }
 
         .bg-thumb {
-          width: 100px;
-          height: 60px;
+          width: 80px;
+          height: auto;
           object-fit: cover;
           margin: 5px;
           border: 3px solid transparent;
-          border-radius: 6px;
+          border-radius: 8px;
           cursor: pointer;
+            transition: transform 0.3s;
         }
 
         .bg-thumb:hover {
           border-color: #ffaa88;
+            transform: scale(1.05);
         }
 
         #fortune {
@@ -46,12 +55,12 @@
         }
 
         button {
-          margin-top: 20px;
-          padding: 10px 20px;
-          font-size: 1.2em;
+          margin-top: 10px;
+          padding: 10px 16px;
+          font-size: 1em;
           border: none;
-          border-radius: 10px;
-          background-color: #ffffffaa;
+          border-radius: 8px;
+          background-color: rgba(255,255,255,0.8);
           cursor: pointer;
         }
 
@@ -72,6 +81,20 @@
          margin-top: 300px;
          text-align: center;
 }
+        @media (max-width: 600px) {
+    .bg-thumb {
+        width: 60px;
+    }
+            button {
+        font-size: 0.9em;
+        padding: 8px 12px;
+    }
+             #fortune {
+        font-size: 1.1em;
+        padding: 10px;
+        margin: 10px;
+    }
+        }
 
     </style>
 </head>
