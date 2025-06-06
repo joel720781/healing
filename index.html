@@ -427,21 +427,8 @@ const result = fortunes[Math.floor(Math.random() * fortunes.length)];
  const bgDiv = document.getElementById("bgSelector");
  bgDiv.style.display = (bgDiv.style.display === "none") ? "block" : "none";
 }
-function migrateOldFortuneData() {
-  let history = JSON.parse(localStorage.getItem("fortuneHistory")) || [];
 
-  // 如果第一筆是純文字，就代表是舊資料格式
-  if (typeof history[0] === "string") {
-    const today = new Date().toLocaleDateString();
-    const newHistory = history.map(text => ({
-      text,
-      date: today
-    }));
-    localStorage.setItem("fortuneHistory", JSON.stringify(newHistory));
-  }
-}
     function saveFortune(fortune) {
-    migrateOldFortuneData(); 
   let history = JSON.parse(localStorage.getItem("fortuneHistory")) || [];
   const alreadyExists = history.some(item => item.text === fortune);
 
