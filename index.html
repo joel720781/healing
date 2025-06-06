@@ -96,7 +96,6 @@
     font-size: 1.2em;
     padding: 16px 20px;
     line-height: 1.6;
-    text-align:center;
     }
             #pupupButtonWrapper{
     font-size: 1.2em;
@@ -172,14 +171,20 @@
 .blur #fortune {
   opacity: 0;
 }
-<!--.blur #contentWrapper button {-->
-<!--  display: none;-->
-<!--  filter: blur(5px);-->
-<!--  pointer-events: none;-->
-<!--  user-select: none;-->
-<!--}-->
 
 <!--集卡簿-->
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.4); /* 白色霧化 */
+  z-index: 0;
+  border-radius: 12px;
+}
+.card > * {
+  position: relative;
+  z-index: 1;
+}
 .card-popup {
   position: fixed;
   top: 50%;
@@ -230,9 +235,14 @@
   overflow-y: auto;
   margin-bottom: 20px;
 }
+
 .card {
   width: 250px;
-  background: #fff8f0;
+  height: 350px;
+  background-image: url("images/card-bg.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   padding: 20px;
@@ -242,14 +252,30 @@
   justify-content: space-between;
   transition: transform 0.3s;
   cursor: pointer;
+
 }
+
 .card:hover {
   transform: scale(1.03);
 }
-.card-content p {
+.card-content {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  border-radius: 10px;
   font-size: 1em;
   margin-bottom: 10px;
-  color: #444;
+}
+
+.card-content .quote-text {
+  font-weight: bold;
+  color: #333;
+  font-size: 1em;
+}
+
+
+.card-notes p {
+  margin: 4px 0;
 }
 .popup-buttons {
   display: flex;
@@ -265,10 +291,10 @@
   text-align: center;
   z-index: 1;
 }
+
     </style>
 </head>
 <body onload="setRandomBackground()">
-<!--<div id="overlay" class="overlay" style="display: block;"></div>-->
 
 <div id="contentWrapper">
     <div id="fortune">準備好了嗎?先深呼吸三次，心中想著今天宇宙有什麼話想跟我說，並按下接收。 🌟</div>
@@ -277,33 +303,34 @@
     <button onclick="showCardGallery()" id="openGalleryBtn"> 💫 我的宇宙回音</button>
 
     <div id="bgSelector" class="bg-selector" style="display: none;">
-    <p>請選擇背景圖：</p>
-    <img src="images/bg1.png" class="bg-thumb" onclick="changeBackground('images/bg1.png')">
-    <img src="images/bg2.png" class="bg-thumb" onclick="changeBackground('images/bg2.png')">
-    <img src="images/bg3.png" class="bg-thumb" onclick="changeBackground('images/bg3.png')">
-    <img src="images/bg4.png" class="bg-thumb" onclick="changeBackground('images/bg4.png')">
-    <img src="images/bg5.png" class="bg-thumb" onclick="changeBackground('images/bg5.png')">
-    <img src="images/bg6.png" class="bg-thumb" onclick="changeBackground('images/bg6.png')">
-    <img src="images/bg7.png" class="bg-thumb" onclick="changeBackground('images/bg7.png')">
-    <img src="images/bg8.png" class="bg-thumb" onclick="changeBackground('images/bg8.png')">
-    <img src="images/bg9.png" class="bg-thumb" onclick="changeBackground('images/bg9.png')">
-    <img src="images/bg10.png" class="bg-thumb" onclick="changeBackground('images/bg10.png')">
-    <img src="images/bg11.png" class="bg-thumb" onclick="changeBackground('images/bg11.png')">
-</div>
+        <p>請選擇背景圖：</p>
+        <img src="images/bg1.png" class="bg-thumb" onclick="changeBackground('images/bg1.png')">
+        <img src="images/bg2.png" class="bg-thumb" onclick="changeBackground('images/bg2.png')">
+        <img src="images/bg3.png" class="bg-thumb" onclick="changeBackground('images/bg3.png')">
+        <img src="images/bg4.png" class="bg-thumb" onclick="changeBackground('images/bg4.png')">
+        <img src="images/bg5.png" class="bg-thumb" onclick="changeBackground('images/bg5.png')">
+        <img src="images/bg6.png" class="bg-thumb" onclick="changeBackground('images/bg6.png')">
+        <img src="images/bg7.png" class="bg-thumb" onclick="changeBackground('images/bg7.png')">
+        <img src="images/bg8.png" class="bg-thumb" onclick="changeBackground('images/bg8.png')">
+        <img src="images/bg9.png" class="bg-thumb" onclick="changeBackground('images/bg9.png')">
+        <img src="images/bg10.png" class="bg-thumb" onclick="changeBackground('images/bg10.png')">
+        <img src="images/bg11.png" class="bg-thumb" onclick="changeBackground('images/bg11.png')">
+    </div>
 </div>
 
+</div>
 <div id="cardGallery" style="display:none;"></div>
 <div class="card-popup" id="cardPopup" style="display: none;">
     <h2>✨ 你抽到的籤語 ✨</h2>
     <p class="quote" id="cardQuote">「你沒有走得太慢，只是在好好感受風景。」</p>
 
- 
+
     <hr>
     <h3>💡 紀錄今天發生的任何美好事物</h3>
     <div id="pupupButtonWrapper">
-    <textarea id="note1" placeholder="1. 今天遇見一個親切的人..."></textarea>
-    <textarea id="note2" placeholder="2. 吃到喜歡的甜點..."></textarea>
-    <textarea id="note3" placeholder="3. 和朋友聊得很開心..."></textarea>
+        <textarea id="note1" placeholder="1. 今天遇見一個親切的人..."></textarea>
+        <textarea id="note2" placeholder="2. 吃到喜歡的甜點..."></textarea>
+        <textarea id="note3" placeholder="3. 和朋友聊得很開心..."></textarea>
     </div>
     <div id="closeCardPopup" class="popup-buttons" style="display:none; margin: 20px auto;">
         <button onclick="saveNotes()">💾 保存筆記</button>
@@ -315,7 +342,6 @@
 </div>
 <div id="cardGallery" style="display: none;"></div>
 <button id="closeGalleryBtn" style="display:none; margin: 20px auto;" onclick="closeCardGallery()">❎ 關閉</button>
-<!--<button onclick="closeCardPopup()">❎ 關閉</button>-->
 <script>
     const backgrounds = [
    'images/bg1.png',
@@ -335,9 +361,9 @@
          const today = new Date().toLocaleDateString();
     const lastDrawDate = localStorage.getItem("lastDrawDate");
 
-   if (lastDrawDate === today) {
+    if (lastDrawDate === today) {
         alert("今天已經抽過囉～明天再來 🌟");
-       return;
+        return;
     }
    const fortunes = [
      "你沒有走得太慢，只是在好好感受風景。",
@@ -430,11 +456,17 @@ function showCardGallery() {
     history.forEach((text, index) => {
       const card = document.createElement("div");
       card.className = "card";
-      card.innerHTML = `
-         <div class="card-content">
-          <p>${text}</p>
-        </div>
-      `;
+      const notes = JSON.parse(localStorage.getItem("notes_" + text)) || ["", "", ""];
+card.innerHTML = `
+  <div class="card-content">
+    <p class="quote-text">「${text}」</p>
+    </div>
+  <div class="card-content">
+    <p>💡 1. ${notes[0] || "(尚未紀錄)"}</p>
+    <p>💡 2. ${notes[1] || "(尚未紀錄)"}</p>
+    <p>💡 3. ${notes[2] || "(尚未紀錄)"}</p>
+  </div>
+`;
        card.onclick = () => openCardPopup(text);
       container.appendChild(card);
     });
