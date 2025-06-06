@@ -247,6 +247,14 @@
   gap: 20px;
   margin-top: 20px;
 }
+         #popupButtonWrapper {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 1;
+}
     </style>
 </head>
 <body onload="setRandomBackground()">
@@ -279,11 +287,14 @@
     <h2>✨ 你抽到的籤語 ✨</h2>
     <p class="quote" id="cardQuote">「你沒有走得太慢，只是在好好感受風景。」</p>
 
+ 
     <hr>
     <h3>💡 紀錄今天發生的任何美好事物</h3>
+    <div id="pupupButtonWrapper">
     <textarea id="note1" placeholder="1. 今天遇見一個親切的人..."></textarea>
     <textarea id="note2" placeholder="2. 吃到喜歡的甜點..."></textarea>
     <textarea id="note3" placeholder="3. 和朋友聊得很開心..."></textarea>
+    </div>
     <div id="closeCardPopup" class="popup-buttons" style="display:none; margin: 20px auto;">
         <button onclick="saveNotes()">💾 保存筆記</button>
         <button   onclick="closeCardPopup()">❎ 關閉</button>
