@@ -427,13 +427,31 @@ const result = fortunes[Math.floor(Math.random() * fortunes.length)];
  const bgDiv = document.getElementById("bgSelector");
  bgDiv.style.display = (bgDiv.style.display === "none") ? "block" : "none";
 }
-    function saveFortune(fortune) {
-    let history = JSON.parse(localStorage.getItem("fortuneHistory")) || [];
-    if (!history.includes(fortune)) {
-        history.push(fortune);
-        localStorage.setItem("fortuneHistory", JSON.stringify(history));
-    }
+function migrateOldFortuneData() {
+  let history = JSON.parse(localStorage.getItem("fortuneHistory")) || [];
+
+  // 如果第一筆是純文字，就代表是舊資料格式
+  if (typeof history[0] === "string") {
+    const today = new Date().toLocaleDateString();
+    const newHistory = history.map(text => ({
+      text,
+      date: today
+    }));
+    localStorage.setItem("fortuneHistory", JSON.stringify(newHistory));
+  }
 }
+    function saveFortune(fortune) {
+    migrateOldFortuneData(); 
+  let history = JSON.parse(localStorage.getItem("fortuneHistory")) || [];
+  const alreadyExists = history.some(item => item.text === fortune);
+
+  if (!alreadyExists) {
+    const today = new Date().toLocaleDateString();
+    history.push({ text: fortune, date: today });
+    localStorage.setItem("fortuneHistory", JSON.stringify(history));
+  }
+}
+
 
 <!--集卡簿-->
 function saveNotes() {
@@ -453,13 +471,14 @@ function showCardGallery() {
   if (history.length === 0) {
     container.innerHTML = '<p style="text-align:center; font-size:1.2em;">你還沒有任何宇宙回音卡牌，快去抽一張吧！</p>';
   } else {
-    history.forEach((text, index) => {
+    history.forEach((item, index) => {
       const card = document.createElement("div");
       card.className = "card";
-      const notes = JSON.parse(localStorage.getItem("notes_" + text)) || ["", "", ""];
+      const notes = JSON.parse(localStorage.getItem("notes_" + item.text)) || ["", "", ""];
 card.innerHTML = `
   <div class="card-content">
-    <p class="quote-text">「${text}」</p>
+  <p class="card-date">📅 ：${item.date}</p>
+    <p class="quote-text">「${item.text}」</p>
     </div>
   <div class="card-content">
     <p>💡 1. ${notes[0] || "(尚未紀錄)"}</p>
@@ -467,7 +486,7 @@ card.innerHTML = `
     <p>💡 3. ${notes[2] || "(尚未紀錄)"}</p>
   </div>
 `;
-       card.onclick = () => openCardPopup(text);
+       card.onclick = () => openCardPopup(item.text);
       container.appendChild(card);
     });
   }
