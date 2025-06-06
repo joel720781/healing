@@ -162,49 +162,139 @@
 .blur #fortune {
   opacity: 0;
 }
-.blur #contentWrapper button {
-  display: none;
+<!--.blur #contentWrapper button {-->
+<!--  display: none;-->
+<!--  filter: blur(5px);-->
+<!--  pointer-events: none;-->
+<!--  user-select: none;-->
+<!--}-->
+
+<!--集卡簿-->
+.card-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 25px 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
 }
-
-
-
-
+.card-popup .quote {
+  font-size: 1.2em;
+  margin: 10px 0 20px;
+}
+.card-popup textarea {
+  width: 100%;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: none;
+  font-size: 0.95em;
+}
+.card-popup button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #ffd6d6;
+  cursor: pointer;
+  font-size: 1em;
+  margin-right: 10px;
+}
+.card-popup button:hover {
+  background-color: #ffc0c0;
+}
+#cardGallery {
+  display: flex; /* 要確保這行有作用 */
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 30px;
+   max-height: 70vh;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+.card {
+  width: 250px;
+  background: #fff8f0;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  padding: 20px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s;
+  cursor: pointer;
+}
+.card:hover {
+  transform: scale(1.03);
+}
+.card-content p {
+  font-size: 1em;
+  margin-bottom: 10px;
+  color: #444;
+}
+.popup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
     </style>
 </head>
 <body onload="setRandomBackground()">
-<div id="overlay" class="overlay" style="display: none;"></div>
-<div id="blurWrapper">
-<div id="appContent">
+<!--<div id="overlay" class="overlay" style="display: block;"></div>-->
 
 <div id="contentWrapper">
     <div id="fortune">準備好了嗎?先深呼吸三次，心中想著今天宇宙有什麼話想跟我說，並按下接收。 🌟</div>
-    <button onclick="drawFortune()">接收 ✨</button>
-    <button onclick="setRandomBackground()">召喚新宇宙背景 🌠</button>
-    <button onclick="showHistory()">💫 我的宇宙回音</button>
+    <button id="drawBtn" onclick="drawFortune()">接收 ✨</button>
+    <button id="bgBtn" onclick="setRandomBackground()">切換背景 🌈</button>
+    <button onclick="showCardGallery()" id="openGalleryBtn"> 💫 我的宇宙回音</button>
 
-
-<div id="bgSelector" class="bg-selector" style="display: none;">
+    <div id="bgSelector" class="bg-selector" style="display: none;">
     <p>請選擇背景圖：</p>
     <img src="images/bg1.png" class="bg-thumb" onclick="changeBackground('images/bg1.png')">
     <img src="images/bg2.png" class="bg-thumb" onclick="changeBackground('images/bg2.png')">
     <img src="images/bg3.png" class="bg-thumb" onclick="changeBackground('images/bg3.png')">
     <img src="images/bg4.png" class="bg-thumb" onclick="changeBackground('images/bg4.png')">
     <img src="images/bg5.png" class="bg-thumb" onclick="changeBackground('images/bg5.png')">
-     <img src="images/bg6.png" class="bg-thumb" onclick="changeBackground('images/bg6.png')">
-     <img src="images/bg7.png" class="bg-thumb" onclick="changeBackground('images/bg7.png')">
-     <img src="images/bg8.png" class="bg-thumb" onclick="changeBackground('images/bg8.png')">
-     <img src="images/bg9.png" class="bg-thumb" onclick="changeBackground('images/bg9.png')">
-     <img src="images/bg10.png" class="bg-thumb" onclick="changeBackground('images/bg10.png')">
-     <img src="images/bg11.png" class="bg-thumb" onclick="changeBackground('images/bg11.png')">
+    <img src="images/bg6.png" class="bg-thumb" onclick="changeBackground('images/bg6.png')">
+    <img src="images/bg7.png" class="bg-thumb" onclick="changeBackground('images/bg7.png')">
+    <img src="images/bg8.png" class="bg-thumb" onclick="changeBackground('images/bg8.png')">
+    <img src="images/bg9.png" class="bg-thumb" onclick="changeBackground('images/bg9.png')">
+    <img src="images/bg10.png" class="bg-thumb" onclick="changeBackground('images/bg10.png')">
+    <img src="images/bg11.png" class="bg-thumb" onclick="changeBackground('images/bg11.png')">
 </div>
 </div>
+
+<div id="cardGallery" style="display:none;"></div>
+<div class="card-popup" id="cardPopup" style="display: none;">
+    <h2>✨ 你抽到的籤語 ✨</h2>
+    <p class="quote" id="cardQuote">「你沒有走得太慢，只是在好好感受風景。」</p>
+
+    <hr>
+    <h3>💡 紀錄今天發生的任何美好事物</h3>
+    <textarea id="note1" placeholder="1. 今天遇見一個親切的人..."></textarea>
+    <textarea id="note2" placeholder="2. 吃到喜歡的甜點..."></textarea>
+    <textarea id="note3" placeholder="3. 和朋友聊得很開心..."></textarea>
+    <div id="closeCardPopup" class="popup-buttons" style="display:none; margin: 20px auto;">
+        <button onclick="saveNotes()">💾 保存筆記</button>
+        <button   onclick="closeCardPopup()">❎ 關閉</button>
+    </div>
+
+
+
 </div>
-</div>
-<div id="popup" class="popup" style="display: none;">
-    <h2>💫 我的宇宙回音</h2>
-    <ul id="historyList"></ul>
-    <button onclick="closePopup()">關閉</button>
-</div>
+<div id="cardGallery" style="display: none;"></div>
+<button id="closeGalleryBtn" style="display:none; margin: 20px auto;" onclick="closeCardGallery()">❎ 關閉</button>
+<!--<button onclick="closeCardPopup()">❎ 關閉</button>-->
 <script>
     const backgrounds = [
    'images/bg1.png',
@@ -218,15 +308,16 @@
    'images/bg9.png',
    'images/bg10.png',
    'images/bg11.png'
+
  ];
  function drawFortune() {
          const today = new Date().toLocaleDateString();
     const lastDrawDate = localStorage.getItem("lastDrawDate");
 
-    if (lastDrawDate === today) {
-        alert("今日的訊息已由宇宙傳達，靜心感受不及於下一個答案。 🌙 ");
-        return;
-    }
+<!--    if (lastDrawDate === today) {-->
+<!--        alert("今天已經抽過囉～明天再來 🌟");-->
+<!--        return;-->
+<!--    }-->
    const fortunes = [
      "你沒有走得太慢，只是在好好感受風景。",
      "今天的你，很努力了，該休息一下了。",
@@ -258,7 +349,7 @@
      "多走走充實心靈，機會正逐漸靠近。",
      "你是擁有能力面對任何事情的，不用害怕相信自己。",
      "想做甚麼事情就去做，不要害怕犯錯。",
-     "你內心是很強大的，沒有什麼會讓你感到害怕。",
+     "你內心是很強大的，沒有甚麼事會讓你到害怕。",
      "制定目標跟著感覺走，不能衝動隨時保持警覺。",
      "只要往前走絕對有解決的方法，停在原地是沒有幫助的。",
      "只要努力去做宇宙自然會幫助你。",
@@ -297,29 +388,66 @@ const result = fortunes[Math.floor(Math.random() * fortunes.length)];
     }
 }
 
-
-function showHistory() {
-    let history = JSON.parse(localStorage.getItem("fortuneHistory")) || [];
-    let list = document.getElementById("historyList");
-    list.innerHTML = ""; // 清空之前的內容
-    if (history.length === 0) {
-        list.innerHTML = "<li>你還沒有收藏籤語，快去抽一張吧！</li>";
-    } else {
-        history.forEach(f => {
-            let li = document.createElement("li");
-            li.textContent = f;
-            list.appendChild(li);
-        });
-    }
-
-    document.getElementById("popup").style.display = "block";
-   document.body.classList.add("blur");
+<!--集卡簿-->
+function saveNotes() {
+  const quote = document.getElementById("cardQuote").innerText;
+  const note1 = document.getElementById("note1").value;
+  const note2 = document.getElementById("note2").value;
+  const note3 = document.getElementById("note3").value;
+  localStorage.setItem("notes_" + quote, JSON.stringify([note1, note2, note3]));
+  alert("已保存今日的三件美好小事 💖");
 }
+function showCardGallery() {
+  // 2. 顯示 cardGallery
+  const history = JSON.parse(localStorage.getItem("fortuneHistory")) || [];
+  const container = document.getElementById("cardGallery");
+<!--  container.innerHTML = ""; // 清空內容-->
 
-function closePopup() {
-    document.getElementById("popup").style.display = "none";
-     document.body.classList.remove("blur");
-
+  if (history.length === 0) {
+    container.innerHTML = '<p style="text-align:center; font-size:1.2em;">你還沒有任何宇宙回音卡牌，快去抽一張吧！</p>';
+  } else {
+    history.forEach((text, index) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+         <div class="card-content">
+          <p>${text}</p>
+        </div>
+      `;
+       card.onclick = () => openCardPopup(text);
+      container.appendChild(card);
+    });
+  }
+  container.style.display = "flex";
+  // 3. 顯示關閉按鈕
+  document.getElementById("closeGalleryBtn").style.display = "block";
+  document.getElementById("contentWrapper").style.display = "none";
+}
+   function openCardPopup(text) {
+  document.getElementById("cardQuote").innerText = text;
+  const savedNotes = JSON.parse(localStorage.getItem("notes_" + text)) || ["", "", ""];
+  document.getElementById("note1").value = savedNotes[0];
+  document.getElementById("note2").value = savedNotes[1];
+  document.getElementById("note3").value = savedNotes[2];
+  document.getElementById("cardPopup").style.display = "block";
+   document.getElementById("cardGallery").style.display = "none";
+  document.getElementById("closeGalleryBtn").style.display = "none";
+  document.getElementById("closeCardPopup").style.display = "flex";
+}
+<!--卡片-->
+function closeCardPopup() {
+  document.getElementById("cardPopup").style.display = "none";
+  document.getElementById("contentWrapper").style.display = "none";
+  document.getElementById("cardGallery").style.display = "flex";
+  document.getElementById("closeGalleryBtn").style.display = "flex";
+}
+<!--集把簿-->
+    function closeCardGallery() {
+     document.getElementById("contentWrapper").style.display = "block";
+  document.getElementById("fortune").style.display = "flex";
+  document.getElementById("closeCardPopup").style.display = "none";
+  document.getElementById("closeGalleryBtn").style.display = "none";
+document.getElementById("cardGallery").style.display = "none";
 }
 
 </script>
